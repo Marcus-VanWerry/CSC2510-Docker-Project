@@ -1,6 +1,22 @@
+
 services:
   db:
     container_name: postgres_db
+
+   image: postgres:16
+   ports: 
+“5432:5432”
+#Not in “Todos” but seems necessary for postgres_password
+   Environment:
+-POSTGRES_USER=postgres
+-POSTGRES_PASSWORD=/run/secrets/db-password
+ 	- POSTGRES_DB=example
+    image: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+secrets:
+      - db-password    
+
 
     # TODO: 
     # define image (if our container is named postgres_db... i wonder... use 16 as the version.)
@@ -32,11 +48,28 @@ services:
       # (DB_HOST (the name of the service our db is in)
       #, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, 
       # and (this container's) PORT 8080)
-
+Environment:
+	DB_HOST=db
+	DB_PORT=5432
+	DB_USER=postgres
+	DB_PASSWORD=/run/secrets/db-password
+	DB_NAME=example
+	PORT=8080
     # TODO: 
       # set our app to run on port 8080
+ports:
+- “8080:8080”
+volumes:
+  db-data:
 
+secrets:
+  db-password:
+    file: db/password.txt
+	
 
 # TODO: 
 # define a volume at the highest level
 # should be same name as the volume you defined for DB
+
+
+
