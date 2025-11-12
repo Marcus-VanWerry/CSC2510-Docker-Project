@@ -4,9 +4,10 @@ FROM golang:1.22-alpine AS builder
 WORKDIR /app
 COPY go.mod ./
 RUN go mod download
-COPY . .
+COPY /app/server --from=builder
+EXPOSE 8080
 RUN go build -o server .
-
+CMD [“alpine”, “/app/server”]
 # Step 2: Run
 FROM alpine:3.20
 # TODO: 
